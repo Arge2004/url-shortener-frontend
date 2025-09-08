@@ -9,5 +9,8 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   vite: {
     plugins: [tailwindcss()]
-  }
+  },
+  site: 'https://Arge2004.github.io',
+  base: '/url-shortener-frontend/',
+
 });
