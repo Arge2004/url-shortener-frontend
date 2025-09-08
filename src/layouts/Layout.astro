@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import icon from "../assets/paper-clip.png";
 export interface Props {
 	title?: string;
 }
@@ -12,7 +13,7 @@ const { title = "URL Shortener" } = Astro.props;
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" type="image/png" href={icon.src} />
 		<meta name="generator" content={Astro.generator} />
 		<meta name="description" content="Acorta tus URLs largas de forma gratuita y rastrea sus estadísticas" />
 		<title>{title}</title>
