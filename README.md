@@ -45,7 +45,7 @@ Una aplicación web moderna y responsive para acortar URLs, construida con **Ast
 
 1. **Clona el repositorio**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Arge2004/url-shortener-frontend.git
    cd shortener-ui
    ```
 
