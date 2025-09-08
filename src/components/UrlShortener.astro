@@ -1,0 +1,469 @@
+---
+// Component logic will be handled on the client side
+---
+
+<div id="url-shortener-app" class="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
+  <div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl md:text-6xl font-bold text-green-800 mb-4">
+        🔗 URL Shortener
+      </h1>
+      <p class="text-lg md:text-xl text-green-700 max-w-2xl mx-auto">
+        Transforma tus URLs largas en enlaces cortos y elegantes. Rastrea estadísticas y gestiona tus enlaces fácilmente.
+      </p>
+    </div>
+
+    <!-- Main Form -->
+    <div class="max-w-4xl mx-auto">
+      <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8">
+        <form id="url-form" class="space-y-6">
+          <div>
+            <label for="original-url" class="block text-sm font-medium text-green-700 mb-2">
+              URL Original
+            </label>
+            <div class="relative">
+              <input
+                type="url"
+                id="original-url"
+                name="originalUrl"
+                placeholder="https://ejemplo.com/mi-url-muy-larga..."
+                required
+                class="w-full px-4 py-3 border-2 border-green-200 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none transition-colors"
+              />
+              <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+          
+          <button
+            type="submit"
+            id="submit-btn"
+            class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors focus:ring-2 focus:ring-green-200 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span id="submit-text">Acortar URL</span>
+            <span id="submit-loading" class="hidden">
+              <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Procesando...
+            </span>
+          </button>
+        </form>
+
+        <!-- Error Message -->
+        <div id="error-message" class="hidden mt-4 p-4 bg-red-100 border border-red-300 text-red-700 rounded-lg">
+          <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+            </svg>
+            <span id="error-text"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div id="results-section" class="hidden max-w-4xl mx-auto space-y-6">
+        <!-- Shortened URL Result -->
+        <div id="shortened-result" class="bg-white rounded-2xl shadow-xl p-6 md:p-8">
+          <h3 class="text-xl font-semibold text-green-800 mb-4">✅ URL Acortada</h3>
+          <div class="bg-green-50 rounded-lg p-4 mb-4">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+              <div class="flex-1 min-w-0">
+                <p class="text-sm text-green-600 mb-1">Tu URL corta:</p>
+                <p id="short-url-display" class="text-lg font-mono text-green-800 break-all"></p>
+              </div>
+              <button
+                id="copy-btn"
+                class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors focus:ring-2 focus:ring-green-200 focus:outline-none"
+              >
+                <span id="copy-text">Copiar</span>
+                <span id="copied-text" class="hidden">¡Copiado!</span>
+              </button>
+            </div>
+          </div>
+          
+          <div class="flex flex-wrap gap-4">
+            <button
+              id="view-stats-btn"
+              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors focus:ring-2 focus:ring-blue-200 focus:outline-none"
+            >
+              Ver Estadísticas
+            </button>
+            <button
+              id="delete-url-btn"
+              class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors focus:ring-2 focus:ring-red-200 focus:outline-none"
+            >
+              Eliminar URL
+            </button>
+          </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div id="stats-section" class="hidden bg-white rounded-2xl shadow-xl p-6 md:p-8">
+          <h3 class="text-xl font-semibold text-green-800 mb-4">📊 Estadísticas</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-green-50 rounded-lg p-4">
+              <p class="text-sm text-green-600 mb-1">URL Original:</p>
+              <p id="stats-original-url" class="text-green-800 break-all font-mono text-sm"></p>
+            </div>
+            <div class="bg-blue-50 rounded-lg p-4">
+              <p class="text-sm text-blue-600 mb-1">Código Corto:</p>
+              <p id="stats-short-code" class="text-blue-800 font-mono text-lg"></p>
+            </div>
+            <div class="bg-purple-50 rounded-lg p-4">
+              <p class="text-sm text-purple-600 mb-1">Accesos:</p>
+              <p id="stats-access-count" class="text-purple-800 text-2xl font-bold"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- URL Management Section -->
+      <div class="max-w-4xl mx-auto mt-12">
+        <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8">
+          <h3 class="text-xl font-semibold text-green-800 mb-4">🔍 Consultar URL Existente</h3>
+          <p class="text-sm text-green-600 mb-4">Puedes ingresar la URL completa (ej: http://localhost:8080/aB1cD2e) o solo el código corto (ej: aB1cD2e)</p>
+          <div class="flex gap-4 flex-col sm:flex-row">
+            <input
+              type="text"
+              id="lookup-code"
+              placeholder="http://localhost:8080/aB1cD2e o solo aB1cD2e"
+              class="flex-1 px-4 py-3 border-2 border-green-200 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none transition-colors"
+            />
+            <button
+              id="lookup-btn"
+              class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors focus:ring-2 focus:ring-green-200 focus:outline-none whitespace-nowrap"
+            >
+              Consultar
+            </button>
+          </div>
+          <div id="extracted-code-display" class="hidden mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <p class="text-sm text-blue-700">
+              <span class="font-medium">Código extraído:</span> 
+              <span id="extracted-code-text" class="font-mono"></span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  // Wait for DOM to be loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    // API Configuration
+    const API_BASE_URL = 'http://localhost:8080';
+    
+    // DOM Elements
+    const urlForm = document.getElementById('url-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const submitText = document.getElementById('submit-text');
+    const submitLoading = document.getElementById('submit-loading');
+    const errorMessage = document.getElementById('error-message');
+    const errorText = document.getElementById('error-text');
+    const resultsSection = document.getElementById('results-section');
+    const shortUrlDisplay = document.getElementById('short-url-display');
+    const copyBtn = document.getElementById('copy-btn');
+    const copyText = document.getElementById('copy-text');
+    const copiedText = document.getElementById('copied-text');
+    const viewStatsBtn = document.getElementById('view-stats-btn');
+    const deleteUrlBtn = document.getElementById('delete-url-btn');
+    const statsSection = document.getElementById('stats-section');
+    const lookupBtn = document.getElementById('lookup-btn');
+    const lookupCode = document.getElementById('lookup-code');
+    const extractedCodeDisplay = document.getElementById('extracted-code-display');
+    const extractedCodeText = document.getElementById('extracted-code-text');
+    
+    let currentShortCode = '';
+
+    // API Functions
+    async function createShortUrl(originalUrl) {
+      const response = await fetch(`${API_BASE_URL}/api/urls`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ originalUrl }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+      
+      return await response.text();
+    }
+
+    async function getUrlStats(shortCode) {
+      const response = await fetch(`${API_BASE_URL}/api/urls/${shortCode}`);
+      
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+      
+      return await response.json();
+    }
+
+    async function deleteUrl(shortCode) {
+      const response = await fetch(`${API_BASE_URL}/api/urls/${shortCode}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+    }
+
+    // Utility Functions
+    function showError(message) {
+      if (errorText && errorMessage) {
+        errorText.textContent = message;
+        errorMessage.classList.remove('hidden');
+        setTimeout(() => {
+          errorMessage.classList.add('hidden');
+        }, 5000);
+      }
+    }
+
+    function setLoading(loading) {
+      if (submitBtn && submitText && submitLoading) {
+        submitBtn.disabled = loading;
+        if (loading) {
+          submitText.classList.add('hidden');
+          submitLoading.classList.remove('hidden');
+        } else {
+          submitText.classList.remove('hidden');
+          submitLoading.classList.add('hidden');
+        }
+      }
+    }
+
+    function extractShortCode(shortUrl) {
+      return shortUrl.split('/').pop();
+    }
+
+    // Function to extract shortcode from full URL or return as-is if it's already a shortcode
+    function extractShortCodeFromInput(input) {
+      if (!input) return '';
+      
+      // Remove whitespace
+      input = input.trim();
+      
+      // If it looks like a URL (contains http:// or https://)
+      if (input.includes('://')) {
+        try {
+          const url = new URL(input);
+          // Extract the last part of the path (the shortcode)
+          const pathParts = url.pathname.split('/').filter(part => part.length > 0);
+          return pathParts[pathParts.length - 1] || '';
+        } catch (error) {
+          // If URL parsing fails, try to extract manually
+          const parts = input.split('/');
+          return parts[parts.length - 1] || '';
+        }
+      }
+      
+      // If it doesn't contain ://, assume it's already a shortcode
+      // Remove any leading/trailing slashes
+      return input.replace(/^\/+|\/+$/g, '');
+    }
+
+    // Function to show extracted code
+    function showExtractedCode(originalInput, extractedCode) {
+      if (originalInput !== extractedCode && extractedCodeText && extractedCodeDisplay) {
+        extractedCodeText.textContent = extractedCode;
+        extractedCodeDisplay.classList.remove('hidden');
+      } else if (extractedCodeDisplay) {
+        extractedCodeDisplay.classList.add('hidden');
+      }
+    }
+
+    function displayShortUrl(shortUrl) {
+      currentShortCode = extractShortCode(shortUrl);
+      if (shortUrlDisplay) shortUrlDisplay.textContent = shortUrl;
+      if (resultsSection) resultsSection.classList.remove('hidden');
+      if (statsSection) statsSection.classList.add('hidden');
+      
+      // Scroll to results
+      if (resultsSection) resultsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function displayStats(stats) {
+      const originalUrlEl = document.getElementById('stats-original-url');
+      const shortCodeEl = document.getElementById('stats-short-code');
+      const accessCountEl = document.getElementById('stats-access-count');
+      
+      if (originalUrlEl) originalUrlEl.textContent = stats.originalUrl;
+      if (shortCodeEl) shortCodeEl.textContent = stats.shortCode;
+      if (accessCountEl) accessCountEl.textContent = stats.accessCount;
+      if (statsSection) statsSection.classList.remove('hidden');
+    }
+
+    // Event Listeners
+    if (urlForm) {
+      urlForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(urlForm);
+        const originalUrl = formData.get('originalUrl');
+        
+        if (!originalUrl) {
+          showError('Por favor ingresa una URL válida que comience con http:// o https://');
+          return;
+        }
+
+        try {
+          setLoading(true);
+          const shortUrl = await createShortUrl(originalUrl);
+          displayShortUrl(shortUrl);
+        } catch (error) {
+          if (error.message.includes('400')) {
+            showError('La URL ingresada no es válida. Asegúrate de incluir http:// o https://');
+          } else if (error.message.includes('500')) {
+            showError('Error del servidor. Por favor intenta nuevamente en unos momentos.');
+          } else if (error.message.includes('fetch')) {
+            showError('No se pudo conectar con el servidor. Verifica que la API esté funcionando en http://localhost:8080');
+          } else {
+            showError('Error al acortar la URL. Verifica que la URL sea válida e intenta nuevamente.');
+          }
+        } finally {
+          setLoading(false);
+        }
+      });
+    }
+
+    if (copyBtn) {
+      copyBtn.addEventListener('click', async () => {
+        try {
+          const textToCopy = shortUrlDisplay ? shortUrlDisplay.textContent || '' : '';
+          await navigator.clipboard.writeText(textToCopy);
+          if (copyText) copyText.classList.add('hidden');
+          if (copiedText) copiedText.classList.remove('hidden');
+          
+          setTimeout(() => {
+            if (copyText) copyText.classList.remove('hidden');
+            if (copiedText) copiedText.classList.add('hidden');
+          }, 2000);
+        } catch (error) {
+          showError('No se pudo copiar automáticamente. Puedes seleccionar y copiar la URL manualmente.');
+        }
+      });
+    }
+
+    if (viewStatsBtn) {
+      viewStatsBtn.addEventListener('click', async () => {
+        if (!currentShortCode) return;
+        
+        try {
+          const stats = await getUrlStats(currentShortCode);
+          displayStats(stats);
+        } catch (error) {
+          if (error.message.includes('404')) {
+            showError('No se encontraron estadísticas para esta URL. Es posible que haya sido eliminada.');
+          } else if (error.message.includes('500')) {
+            showError('Error del servidor. Por favor intenta nuevamente en unos momentos.');
+          } else {
+            showError('Error al obtener las estadísticas. Intenta nuevamente.');
+          }
+        }
+      });
+    }
+
+    if (deleteUrlBtn) {
+      deleteUrlBtn.addEventListener('click', async () => {
+        if (!currentShortCode) return;
+        
+        if (!confirm('¿Estás seguro de que quieres eliminar esta URL? Esta acción no se puede deshacer.')) {
+          return;
+        }
+        
+        try {
+          await deleteUrl(currentShortCode);
+          if (resultsSection) resultsSection.classList.add('hidden');
+          currentShortCode = '';
+          if (urlForm) urlForm.reset();
+          showError('URL eliminada exitosamente');
+        } catch (error) {
+          if (error.message.includes('404')) {
+            showError('La URL ya no existe o ya fue eliminada anteriormente.');
+          } else if (error.message.includes('500')) {
+            showError('Error del servidor. Por favor intenta nuevamente en unos momentos.');
+          } else {
+            showError('Error al eliminar la URL. Intenta nuevamente.');
+          }
+        }
+      });
+    }
+
+    if (lookupBtn) {
+      lookupBtn.addEventListener('click', async () => {
+        const inputValue = lookupCode ? lookupCode.value.trim() : '';
+        
+        if (!inputValue) {
+          showError('Por favor ingresa una URL o código corto válido');
+          return;
+        }
+        
+        // Extract shortcode from input (whether it's a full URL or just the code)
+        const shortCode = extractShortCodeFromInput(inputValue);
+        
+        if (!shortCode) {
+          showError('Por favor ingresa una URL válida o un código de 7 caracteres (ej: aB1cD2e)');
+          return;
+        }
+        
+        // Show extracted code if different from input
+        showExtractedCode(inputValue, shortCode);
+        
+        try {
+          const stats = await getUrlStats(shortCode);
+          currentShortCode = shortCode;
+          if (shortUrlDisplay) shortUrlDisplay.textContent = `${API_BASE_URL}/${shortCode}`;
+          if (resultsSection) resultsSection.classList.remove('hidden');
+          displayStats(stats);
+          
+          // Scroll to results
+          if (resultsSection) resultsSection.scrollIntoView({ behavior: 'smooth' });
+        } catch (error) {
+          // Check if it's a 404 error (URL not found)
+          if (error.message.includes('404')) {
+            showError(`No se encontró una URL con el código "${shortCode}". Verifica que el código sea correcto.`);
+          } else if (error.message.includes('500')) {
+            showError('Error del servidor. Por favor intenta nuevamente en unos momentos.');
+          } else if (error.message.includes('fetch')) {
+            showError('No se pudo conectar con el servidor. Verifica que la API esté funcionando.');
+          } else {
+            showError(`Error al consultar la URL: Verifica que el código "${shortCode}" sea válido.`);
+          }
+        }
+      });
+    }
+
+    // Allow Enter key on lookup input and show real-time extraction
+    if (lookupCode) {
+      lookupCode.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          if (lookupBtn) lookupBtn.click();
+        }
+      });
+
+      // Show real-time shortcode extraction as user types
+      lookupCode.addEventListener('input', (e) => {
+        const inputValue = e.target.value.trim();
+        
+        if (inputValue) {
+          const extractedCode = extractShortCodeFromInput(inputValue);
+          showExtractedCode(inputValue, extractedCode);
+        } else {
+          // Hide extraction display when input is empty
+          if (extractedCodeDisplay) extractedCodeDisplay.classList.add('hidden');
+        }
+      });
+    }
+  });
+</script> 
