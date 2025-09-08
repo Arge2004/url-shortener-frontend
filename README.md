@@ -107,27 +107,4 @@ La aplicación está optimizada para:
 - **Tablet** (768px - 1023px)
 - **Mobile** (320px - 767px)
 
-## 🎯 Próximas Mejoras
 
-- [ ] Historial de URLs creadas
-- [ ] Autenticación de usuarios
-- [ ] URLs con expiración
-- [ ] Análisis detallados (gráficos)
-- [ ] Personalización de códigos cortos
-- [ ] Modo oscuro
-
-## 🤝 Contribución
-
-1. Fork el proyecto
-2. Crea tu rama de feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT - ve el archivo [LICENSE](LICENSE) para detalles.
-
----
-
-**¡Desarrollado con ❤️ y mucho ☕!**
