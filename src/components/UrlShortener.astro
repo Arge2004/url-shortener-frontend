@@ -157,8 +157,9 @@
 <script is:inline>
   // Wait for DOM to be loaded
   document.addEventListener('DOMContentLoaded', function() {
-    // API Configuration
-    const API_BASE_URL = 'http://13.58.106.198';
+    // API Configuration - Using local proxy to avoid mixed content issues
+    const API_BASE_URL = window.location.origin;
+    const BACKEND_DISPLAY_URL = 'http://13.58.106.198';
     
     // DOM Elements
     const urlForm = document.getElementById('url-form');
@@ -196,7 +197,9 @@
         throw new Error(`Error ${response.status}: ${response.statusText}`);
       }
       
-      return await response.text();
+      // The backend returns the full URL, we need to replace it with our display URL
+      const shortUrl = await response.text();
+      return shortUrl.replace('http://13.58.106.198', BACKEND_DISPLAY_URL);
     }
 
     async function getUrlStats(shortCode) {
@@ -423,7 +426,7 @@
         try {
           const stats = await getUrlStats(shortCode);
           currentShortCode = shortCode;
-          if (shortUrlDisplay) shortUrlDisplay.textContent = `${API_BASE_URL}/${shortCode}`;
+          if (shortUrlDisplay) shortUrlDisplay.textContent = `${BACKEND_DISPLAY_URL}/${shortCode}`;
           if (resultsSection) resultsSection.classList.remove('hidden');
           displayStats(stats);
           
