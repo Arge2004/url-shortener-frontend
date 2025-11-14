@@ -63,9 +63,9 @@ Una aplicación web moderna y responsive para acortar URLs, construida con **Ast
    - Visita `http://localhost:4321`
    - ¡Comienza a acortar URLs!
 
-## 📡 API Backend
+## 📡 API Backend / Puedes ver el repositorio del backend **[aquí](https://github.com/Arge2004/shortener-backend)**
 
-La aplicación espera que el backend esté ejecutándose en `http://localhost:8080` con los siguientes endpoints:
+La aplicación espera que el backend esté ejecutándose en `http://localhost:8080` para local y se encuentra desplegado en `https://shortener-backend-9rff.onrender.com` con los siguientes endpoints: 
 
 - `POST /api/urls` - Crear URL corta
 - `GET /api/urls/{shortCode}` - Obtener estadísticas
